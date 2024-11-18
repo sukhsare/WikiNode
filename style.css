@@ -1,0 +1,28 @@
+/* Style for the graph container */
+#graph-container {
+    width: 800px;
+    height: 600px;
+    border: 1px solid black;
+    margin-top: 50px; /* Push down to make space for the search bar */
+  }
+  
+  /* Style for the search bar */
+  #search-bar-container {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    gap: 10px; /* Add spacing between the input and button */
+  }
+  
+  #search-bar {
+    padding: 5px;
+    font-size: 14px;
+  }
+  
+  #search-button {
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  
