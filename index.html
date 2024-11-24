@@ -1,16 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wikipedia Graph</title>
+  <link rel="stylesheet" href="style.css">
   <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-  <div id="search-bar-container">
-    <input type="text" id="search-bar" placeholder="Search for a node...">
-    <button id="search-button">Search</button>
+  <div class="top-bar">
+    <div class="search-container">
+      <input id="search-bar" type="text" placeholder="Search Wikipedia..." autocomplete="off">
+      <ul id="suggestions"></ul>
+    </div>
+    <div class="links">
+      <a href="#more-info">More Info</a>
+      <a href="#code">Code</a>
+      <a href="#about">About</a>
+    </div>
   </div>
-  <div id="graph-container"></div>
+  <div class="graph-container-wrapper">
+    <div id="graph-container"></div>
+  </div>
   <script src="script.js"></script>
 </body>
 </html>
