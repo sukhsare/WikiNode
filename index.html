@@ -4,24 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Wikipedia Graph</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
   <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 </head>
 <body>
+  <!-- Top Bar -->
   <div class="top-bar">
     <div class="search-container">
       <input id="search-bar" type="text" placeholder="Search Wikipedia..." autocomplete="off">
       <ul id="suggestions"></ul>
     </div>
-    <div class="links">
-      <a href="#more-info">More Info</a>
-      <a href="#code">Code</a>
-      <a href="#about">About</a>
+    <div class="nav-links">
+      <!-- These links can point to separate pages (create more-info.html, code.html, about.html as placeholders) -->
+      <a href="more-info.html">More Info</a>
+      <a href="code.html">Code</a>
+      <a href="about.html">About</a>
     </div>
   </div>
+
+  <!-- Graph Container with Floating Controls -->
   <div class="graph-container-wrapper">
     <div id="graph-container"></div>
+    <div class="graph-controls">
+      <button id="zoom-in" class="control-button">+</button>
+      <button id="zoom-out" class="control-button">–</button>
+      <button id="clear-graph" class="control-button clear">Clear Graph</button>
+    </div>
   </div>
-  <script src="script.js"></script>
+
+  <script src="js/script.js"></script>
 </body>
 </html>

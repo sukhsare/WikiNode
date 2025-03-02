@@ -1,0 +1,19 @@
+To Do:
+
+- implement: 'const PAGEVIEWS_API_URL = ${SEARCH_API_URL}&prop=pageviews;' 
+    - adjust node size based on pageview
+- click on node to expand/open wiki article
+- add own analysis of node relationships
+- add addtional button for zoom in/out and clear graph
+- add maybe a customising feature, so users can change colour of nodes etc
+- loading bar to show node is expanding
+- clean up ui 
+- implement other pages
+- purchase domain
+- host it on website
+- look into how articles are associated and implement colour accordingly
+- if node exists and you search for it, it zooms into existing node
+- long hover ocer ndoe for even more infor (or be able to toggle this on an off)
+- export graph (f that)
+- dark mode
+- if user seached for two articles and they share the same related nodes, then connect those nodes - *done
