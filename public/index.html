@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- basic head stuff for the homepage -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WikiGraph</title>
+  <!-- small icon for the browser tab -->
+  <link rel="icon" href="../src/assets/images/wikigraph_logo.png" type="image/png">
+  <!-- load NProgress CSS (for the loading bar) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
+  <!-- use a nice Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome for theme icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- main stylesheet -->
+  <link rel="stylesheet" href="../src/CSS/style.css">
+  <!-- include vis-network for the graph visualisation -->
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
+<body>
+  <!-- header with logo, search, and nav links -->
+  <header class="top-bar">
+    <div class="header-left">
+      <!-- clicking the logo goes back to the home page -->
+      <a href="index.html" class="logo">
+        <img src="../src/assets/images/wikigraph_logo.png" alt="WikiGraph Logo">
+      </a>
+      <!-- search container with input, random article button and suggestions list -->
+      <div class="search-container">
+        <input id="search-bar" type="text" placeholder="Search Wikipedia..." autocomplete="off">
+        <button id="randomise-button">Random Article</button>
+        <ul id="suggestions"></ul>
+      </div>
+    </div>
+    <nav class="nav-links">
+      <!-- link to my code on GitHub -->
+      <a href="https://github.com/sukhsare" target="_blank">Code</a>
+      <!-- link to the about page -->
+      <a href="about.html">About</a>
+      <!-- button for dark mode toggle -->
+      <button id="theme-toggle" title="Dark Mode">
+        <span id="theme-icon-container"></span>
+      </button>
+    </nav>
+  </header>
+  
+  <!-- container for the interactive graph -->
+  <div class="graph-container-wrapper">
+    <div id="graph-container"></div>
+    <!-- buttons to control the graph view -->
+    <div class="graph-controls">
+      <button id="zoom-in" class="control-button">+</button>
+      <button id="zoom-out" class="control-button">–</button>
+      <button id="center-graph" class="control-button center">Centre Graph</button>
+      <button id="clear-graph" class="control-button clear">Clear Graph</button>
+      <button id="color-toggle" class="control-button">Colour Nodes: Off</button>
+    </div>
+  </div>
+  
+  <!-- legend showing popularity gradient -->
+  <div id="legend-container">
+    <div id="legend">
+      <div class="legend-label">Least Popular</div>
+      <div class="legend-gradient"></div>
+      <div class="legend-label">Most Popular</div>
+    </div>
+  </div>
+  
+  <!-- intro modal explaining the project -->
+  <div id="intro-modal" class="modal">
+    <div class="modal-content">
+      <h2 class="modal-title">Welcome to WikiGraph</h2>
+      <p class="modal-description">
+        WikiGraph turns Wikipedia into an interactive graph that shows hidden connections between articles.
+        Explore topics in a fresh, engaging way and discover relationships you might never have noticed before.
+      </p>
+      <div class="modal-section">
+        <h3 class="modal-section-title">Controls</h3>
+        <ul class="modal-list">
+          <li><strong>Click to Expand:</strong> Click a node to reveal related articles.</li>
+          <li><strong>Ctrl/Command + Click:</strong> Open the article in a new tab.</li>
+          <li><strong>Graph Controls:</strong> Use the zoom, centre and clear buttons to adjust the view.</li>
+        </ul>
+      </div>
+      <div class="modal-section">
+        <h3 class="modal-section-title">About This Project</h3>
+        <ul class="modal-list">
+          <li>This final-year project was built to explore data visualisation and graph theory using Wikipedia's huge dataset.</li>
+          <li>The aim is to create an intuitive tool for understanding how articles relate to each other.</li>
+          <li>Future plans include more interactive features and better analytical tools.</li>
+        </ul>
+      </div>
+      <button id="close-modal" class="modal-close">Okay</button>
+    </div>
+  </div>
+  
+  <!-- load NProgress JS for the loading bar -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
+  <!-- main app script (as an ES module) -->
+  <script type="module" src="../src/js/app.js"></script>
+</body>
+</html>

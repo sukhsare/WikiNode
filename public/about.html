@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- basic setup for the about page -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About – WikiGraph</title>
+  <!-- small icon in the tab -->
+  <link rel="icon" href="../src/assets/images/wikigraph_logo.png" type="image/png">
+  <!-- using a nice Google font -->
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <!-- main stylesheet -->
+  <link rel="stylesheet" href="../src/CSS/style.css">
+  <!-- Font Awesome for theme icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- include vis-network for graph visualisations -->
+  <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
+<body>
+  <!-- header section -->
+  <header class="top-bar">
+    <div class="header-left">
+      <!-- clicking the logo brings you back to the home page -->
+      <a href="index.html" class="logo">
+        <img src="../src/assets/images/wikigraph_logo.png" alt="WikiGraph Logo">
+      </a>
+    </div>
+    <nav class="nav-links">
+      <!-- link to my code on github -->
+      <a href="https://github.com/sukhsare" target="_blank">Code</a>
+      <!-- current page -->
+      <a href="about.html">About</a>
+      <!-- button to toggle dark mode -->
+      <button id="theme-toggle" title="Dark Mode">
+        <span id="theme-icon-container"></span>
+      </button>
+    </nav>
+  </header>
+  
+  <!-- main content area for about info -->
+  <main class="main-content about-content">
+    <h2>About WikiGraph</h2>
+    <p>
+      WikiGraph is my final-year project that turns Wikipedia into an interactive visualisation, showing the hidden connections between articles. Instead of following info in a boring, linear way, it lets you explore topics as a network.
+    </p>
+    <p>
+      <strong>Project Overview:</strong><br>
+      The aim is to create an intuitive tool that helps understand how Wikipedia articles relate to one another using modern web tech. It uses the Wikipedia REST API and graph visualisation techniques to make exploring topics easy.
+    </p>
+    <p>
+      <strong>Motivation:</strong><br>
+      I built this project out of a genuine passion for data visualisation and graph theory. It shows off not just my technical skills, but also my creative side when it comes to presenting complex data in a way that’s engaging and educational.
+    </p>
+    <p>
+      <strong>Future Directions:</strong><br>
+      Looking ahead, I plan to improve performance, add more interactive features and analytical tools, and possibly work with other datasets. This project is just the start of even bigger visualisation ideas.
+    </p>
+    <p>
+      <strong>About the Developer:</strong><br>
+      I’m a final-year student with a real interest in web development and data visualisation. This project reflects both my academic journey and my love for finding new ways to make complex data accessible and fun.
+    </p>
+  </main>
+  
+  <!-- load the main app script (ES module) -->
+  <script type="module" src="../src/js/app.js"></script>
+</body>
+</html>
