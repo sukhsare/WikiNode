@@ -1,24 +1,25 @@
-// this file has functions to talk to wikipedia's apis
-
 import { SEARCH_API_URL, LINKS_API_URL, PAGEVIEWS_API_URL } from '../config.js'
 
-// a simple cache so we don't fetch pageviews for the same article twice
+// caches for pageviews link count page ids and all links
 const pageviewsCache = new Map()
+const linkCountCache = new Map()
+const pageIdCache = {}  // key is lowercase title
+const allLinksCache = new Map()
 
-// gets the total pageviews for an article title
+// helper to sleep for ms milliseconds
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+// get pageviews for a given title
 export async function getPageviews(title) {
-  // if we've already got the views, just return them
-  if (pageviewsCache.has(title)) {
-    return pageviewsCache.get(title)
-  }
-  // replace spaces with underscores for the api
+  if (pageviewsCache.has(title)) return pageviewsCache.get(title)
   const formattedTitle = title.replace(/ /g, "_")
   const url = PAGEVIEWS_API_URL.replace("{title}", encodeURIComponent(formattedTitle))
   try {
     const response = await fetch(url)
-    if (!response.ok) throw new Error("HTTP error: " + response.status)
+    if (!response.ok) throw new Error("http error " + response.status)
     const data = await response.json()
-    // sum up all the views from the items, or default to 0 if none
     const totalViews = data.items ? data.items.reduce((sum, item) => sum + item.views, 0) : 0
     pageviewsCache.set(title, totalViews)
     return totalViews
@@ -28,21 +29,100 @@ export async function getPageviews(title) {
   }
 }
 
-// gets the page id for a given article title
-export async function getPageIdByTitle(title) {
-  try {
-    const response = await fetch(`${SEARCH_API_URL}&titles=${encodeURIComponent(title)}&prop=pageids`)
-    const data = await response.json()
-    const pageIds = Object.keys(data.query.pages)
-    return pageIds.length > 0 ? pageIds[0] : null
-  } catch (error) {
-    console.error("error fetching page id for", title, error)
-    return null
+// get link count for a given title
+export async function getLinkCount(title) {
+  if (linkCountCache.has(title)) return linkCountCache.get(title)
+  const formattedTitle = title.replace(/ /g, "_")
+  const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=info&inprop=linkcount&titles=${encodeURIComponent(formattedTitle)}&origin=*`
+  let retries = 3
+  while (retries > 0) {
+    try {
+      const response = await fetch(url)
+      if (!response.ok) {
+        if (response.status === 429) {
+          console.warn(`too many requests for ${title} retrying`)
+          await sleep(1000)
+          retries--
+          continue
+        }
+        throw new Error("http error " + response.status)
+      }
+      const data = await response.json()
+      const pages = data.query.pages
+      const firstPageKey = Object.keys(pages)[0]
+      let count = pages[firstPageKey].linkcount
+      if (typeof count !== 'number' || count === 0) {
+        const pageid = pages[firstPageKey].pageid
+        if (pageid) {
+          const links = await getAllLinks(pageid)
+          count = links.length
+        }
+      }
+      console.log(`link count for ${title} is ${count}`)
+      linkCountCache.set(title, count)
+      return count
+    } catch (error) {
+      console.error(`error fetching link count for ${title}`, error)
+      retries--
+      if (retries === 0) return 0
+      await sleep(1000)
+    }
   }
+  return 0
 }
 
-// gets all the linked articles for a given page id
+// get page ids for a list of titles
+export async function getPageIdsForTitles(titles) {
+  const uniqueTitles = Array.from(new Set(titles.map(t => t.trim())))
+  if (uniqueTitles.length === 0) return {}
+  const joinedTitles = uniqueTitles.join("|")
+  const url = `${SEARCH_API_URL}&titles=${encodeURIComponent(joinedTitles)}&prop=pageids`
+  const maxRetries = 3
+  let attempt = 0
+  while (attempt < maxRetries) {
+    try {
+      const response = await fetch(url)
+      if (!response.ok) {
+        if (response.status === 429) {
+          await sleep(1000 * (attempt + 1))
+          attempt++
+          continue
+        }
+        throw new Error("http error " + response.status)
+      }
+      const data = await response.json()
+      if (!data.query || !data.query.pages) throw new Error("missing pages in response")
+      const pages = data.query.pages
+      const result = {}
+      Object.keys(pages).forEach(key => {
+        const page = pages[key]
+        result[page.title.toLowerCase()] = page.pageid
+        pageIdCache[page.title.toLowerCase()] = page.pageid
+      })
+      return result
+    } catch (error) {
+      attempt++
+      if (attempt >= maxRetries) {
+        console.error("error fetching batch page ids for", uniqueTitles, error)
+        return {}
+      }
+      await sleep(1000 * attempt)
+    }
+  }
+  return {}
+}
+
+// get page id by title
+export async function getPageIdByTitle(title) {
+  const key = title.toLowerCase()
+  if (pageIdCache[key]) return pageIdCache[key]
+  const result = await getPageIdsForTitles([title])
+  return result[key] || null
+}
+
+// get all links for a page id
 export async function getAllLinks(pageid) {
+  if (allLinksCache.has(pageid)) return allLinksCache.get(pageid)
   let allLinks = []
   let plcontinue = null
   do {
@@ -50,19 +130,18 @@ export async function getAllLinks(pageid) {
     const response = await fetch(url)
     const data = await response.json()
     if (!data.query || !data.query.pages || !data.query.pages[pageid]) {
-      console.warn("unexpected response structure in getAllLinks:", data)
+      console.warn("unexpected response structure in getAllLinks", data)
       return allLinks
     }
     const page = data.query.pages[pageid]
-    if (page.links) {
-      allLinks = allLinks.concat(page.links)
-    }
+    if (page.links) allLinks = allLinks.concat(page.links)
     plcontinue = data.continue ? data.continue.plcontinue : null
   } while (plcontinue)
+  allLinksCache.set(pageid, allLinks)
   return allLinks
 }
 
-// gets trending articles using yesterday's data
+// fetch trending articles from wikipedia pageviews api
 export async function fetchTrendingArticles() {
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
@@ -85,7 +164,7 @@ export async function fetchTrendingArticles() {
   }
 }
 
-// gets a random article from wikipedia
+// fetch a random article ensuring main namespace using rnnamespace=0
 export async function fetchRandomArticle() {
   try {
     const randomEndpoint = "https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json&origin=*"
@@ -98,5 +177,28 @@ export async function fetchRandomArticle() {
   } catch (error) {
     console.error("error fetching random article", error)
     return null
+  }
+}
+
+// fetch related articles using the search api
+export async function getRelatedArticles(title) {
+  // construct url to fetch related pages using srsearch
+  const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(title)}&srlimit=10&format=json&origin=*`
+  try {
+    const response = await fetch(url, { mode: "cors" })
+    if (!response.ok) {
+      throw new Error(`http error ${response.status}`)
+    }
+    const data = await response.json()
+    console.debug("search response for", title, data)
+    // map search results to array of objects with title and snippet
+    const relatedArticles = data.query.search.map(result => ({
+      title: result.title,
+      snippet: result.snippet || ""
+    }))
+    return relatedArticles
+  } catch (error) {
+    console.error("error in getRelatedArticles for", title, error)
+    return []
   }
 }

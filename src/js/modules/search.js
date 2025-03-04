@@ -1,26 +1,22 @@
-/* search.js */
-// this file handles the search box and its suggestion list
-
 import { SEARCH_API_URL } from '../config.js'
 import { getPageIdByTitle } from './api.js'
 import { createCentralNode } from './graph.js'
 import { fetchTrendingArticles } from './api.js'
 
-// cache trending articles so we don't keep refetching
 let trendingCache = null
 
 export function initSearch() {
   const searchBar = document.getElementById('search-bar')
   const suggestionsEl = document.getElementById('suggestions')
 
-  // when the search box gets focus or is clicked, show trending suggestions
+  // when search bar gets focus or is clicked show suggestions and handle trending
   searchBar.addEventListener('focus', handleTrending)
   searchBar.addEventListener('click', () => {
     suggestionsEl.style.display = 'block'
     handleTrending()
   })
 
-  // on typing, fetch and display matching suggestions
+  // on input update suggestions
   searchBar.addEventListener('input', async () => {
     suggestionsEl.style.display = 'block'
     const query = searchBar.value.trim()
@@ -29,16 +25,17 @@ export function initSearch() {
       return
     }
     try {
+      // fetch search results from the wikipedia api using the query
       const response = await fetch(`${SEARCH_API_URL}&list=search&srsearch=${encodeURIComponent(query)}`)
       const data = await response.json()
       suggestionsEl.innerHTML = ''
       if (!data.query?.search?.length) {
         const li = document.createElement('li')
-        li.textContent = "No results found."
+        li.textContent = "no results found"
         suggestionsEl.appendChild(li)
         return
       }
-      // sort results so those that start with the query come first
+      // sort results so that those starting with the query come first
       const sortedResults = data.query.search.sort((a, b) => {
         const aTitle = a.title.toLowerCase()
         const bTitle = b.title.toLowerCase()
@@ -47,6 +44,7 @@ export function initSearch() {
         const bStarts = bTitle.startsWith(q) ? 0 : 1
         return aStarts - bStarts
       })
+      // loop through sorted results and create suggestion list items
       sortedResults.forEach(item => {
         const lowerTitle = item.title.toLowerCase()
         // filter out unwanted pages
@@ -57,18 +55,17 @@ export function initSearch() {
           lowerTitle.startsWith("user:") ||
           lowerTitle.startsWith("wikipedia:") ||
           lowerTitle.startsWith("category:") ||
-          lowerTitle.startsWith("template:")
+          lowerTitle.startsWith("template:") ||
+          lowerTitle.includes(".jpg")
         ) return
 
         const li = document.createElement('li')
         li.textContent = item.title
         li.dataset.pageid = item.pageid
         suggestionsEl.appendChild(li)
-        // when a suggestion is clicked, add the node and hide the suggestion list
         li.addEventListener('click', (e) => {
           e.preventDefault()
           e.stopPropagation()
-          // remove focus so suggestions don't reappear
           searchBar.blur()
           createCentralNode(item.title, item.pageid)
           searchBar.value = ''
@@ -77,11 +74,11 @@ export function initSearch() {
         })
       })
     } catch (error) {
-      console.error('Error fetching search suggestions:', error)
+      console.error('error fetching search suggestions', error)
     }
   })
 
-  // hide suggestions if clicking outside the search area
+  // hide suggestions if user clicks outside search bar and suggestions list
   document.addEventListener('click', (e) => {
     if (!searchBar.contains(e.target) && !suggestionsEl.contains(e.target)) {
       suggestionsEl.innerHTML = ''
@@ -90,7 +87,7 @@ export function initSearch() {
   })
 }
 
-// if no query, show trending articles as suggestions
+// handle trending articles when search bar is empty
 async function handleTrending() {
   const searchBar = document.getElementById('search-bar')
   const suggestionsEl = document.getElementById('suggestions')
@@ -103,7 +100,7 @@ async function handleTrending() {
   }
 }
 
-// show a list of trending articles in the suggestions list
+// populate suggestions with trending articles
 function populateSuggestions(articles) {
   const suggestionsEl = document.getElementById('suggestions')
   suggestionsEl.innerHTML = ''
@@ -118,11 +115,12 @@ function populateSuggestions(articles) {
            !title.startsWith("help:") &&
            !title.startsWith("category:") &&
            !title.startsWith("template:") &&
-           !title.includes("citation needed")
+           !title.includes("citation needed") &&
+           !title.includes(".jpg")
   })
   if (filtered.length === 0) {
     const li = document.createElement('li')
-    li.textContent = "No trending articles found."
+    li.textContent = "no trending articles found"
     suggestionsEl.appendChild(li)
     return
   }
@@ -131,11 +129,9 @@ function populateSuggestions(articles) {
     li.textContent = article.article.replace(/_/g, ' ')
     li.dataset.article = article.article
     suggestionsEl.appendChild(li)
-    // when a trending suggestion is clicked, add the node and hide suggestions
     li.addEventListener('click', async (e) => {
       e.preventDefault()
       e.stopPropagation()
-      // remove focus so suggestions don't reappear
       document.getElementById('search-bar').blur()
       suggestionsEl.innerHTML = ''
       suggestionsEl.style.display = 'none'

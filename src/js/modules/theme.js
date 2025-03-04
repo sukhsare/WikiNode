@@ -1,7 +1,3 @@
-/* theme.js */
-// this file toggles dark/light mode using Font Awesome icons
-
-// use Font Awesome icons (make sure you've added the Font Awesome stylesheet in your html head)
 export const sunIcon = '<i class="fa-solid fa-sun"></i>'
 export const moonIcon = '<i class="fa-solid fa-moon"></i>'
 
@@ -10,7 +6,7 @@ export function initThemeToggle() {
   const themeIconContainer = document.getElementById('theme-icon-container')
   if (!themeToggle || !themeIconContainer) return
 
-  // set initial theme from localStorage
+  // set initial theme from localstorage
   if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark-mode')
     themeIconContainer.innerHTML = moonIcon
@@ -22,7 +18,7 @@ export function initThemeToggle() {
     themeToggle.title = "Dark Mode"
   }
 
-  // when the toggle is clicked, swap dark mode and update the icon
+  // click listener to toggle dark mode and update icon
   themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode')
     updateThemeIcon()
@@ -35,7 +31,7 @@ export function initThemeToggle() {
 }
 
 function updateThemeIcon() {
-  // update the icon based on the current theme
+  // update icon based on current theme
   const themeToggle = document.getElementById('theme-toggle')
   const themeIconContainer = document.getElementById('theme-icon-container')
   if (!themeToggle || !themeIconContainer) return
