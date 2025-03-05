@@ -214,6 +214,14 @@
     border-radius: 10px;
     border: none;
     position: relative;
+    outline: none !important;
+  }
+  
+  /* Remove focus outline from the graph container on focus and focus-visible */
+  #graph-container:focus,
+  #graph-container:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
   }
   
   /* graph control buttons container */
@@ -322,8 +330,6 @@
     background-color: rgba(0, 0, 0, 0.5);
   }
   
-  /* modal content styling
-     margin and padding for a clean look */
   .modal-content {
     background-color: #fff;
     color: #333;
@@ -361,7 +367,6 @@
     padding: 0 10px;
   }
   
-  /* modal text styling */
   .modal-title {
     text-align: center;
     margin-bottom: 10px;
@@ -436,8 +441,7 @@
     font-size: 18px;
   }
   
-  /* tooltip styling for nodes
-     set up a fade transition for tooltip */
+  /* tooltip styling for nodes */
   #tooltip {
     position: fixed;
     background-color: rgba(0, 0, 0, 0.8);
@@ -491,7 +495,7 @@
     color: #fff !important;
   }
   
-  /* additional styling for modal buttons with horizontal gap */
+  /* additional styling for modal buttons */
   .modal-button {
     padding: 10px 15px;
     margin: 5px;
@@ -509,21 +513,18 @@
     border-color: var(--accent-color);
   }
   
-  /* info text styling for import/export modals */
   .modal-info {
     font-size: 16px;
     margin-bottom: 10px;
     color: var(--text-color);
   }
   
-  /* align file input and import button horizontally */
   .import-controls {
     display: flex;
     align-items: center;
     gap: 20px;
   }
   
-  /* make file input bigger and align text vertically */
   #import-file {
     font-size: 16px;
     padding: 4px;
@@ -532,12 +533,11 @@
     line-height: 1.2;
   }
   
-  /* style the choose file button in webkit/blink browsers */
   #import-file::-webkit-file-upload-button {
     font-size: 16px;
     padding: 10px 15px;
     margin: 0;
-    margin-right: 10px; /* gap between choose file and no file chosen text */
+    margin-right: 10px;
     background-color: var(--button-bg);
     color: var(--button-text);
     border: 1px solid var(--accent-color);
@@ -546,9 +546,15 @@
     line-height: 1.2;
   }
   
-  /* dark mode adjustments for choose file button in webkit/blink */
   body.dark-mode #import-file::-webkit-file-upload-button {
     background-color: #333;
     color: #fff;
     border-color: var(--accent-color);
   }
+  
+  /* Override for selection outline in vis.js network */
+  .vis-network .vis-selected {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
