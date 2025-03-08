@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
   <!-- use a nice Google font -->
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Font Awesome for theme icons -->
+  <!-- Font Awesome for theme and undo/redo icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- main stylesheet -->
   <link rel="stylesheet" href="../src/css/style.css">
@@ -21,7 +21,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-  <!-- header with logo, search, nav links and new Import/Export link -->
+  <!-- header with logo, search, nav links and Import/Export link -->
   <header class="top-bar">
     <div class="header-left">
       <a href="index.html" class="logo">
@@ -36,7 +36,7 @@
     <nav class="nav-links">
       <a href="https://github.com/sukhsare" target="_blank">Code</a>
       <a href="about.html">About</a>
-      <!-- New Import/Export link styled like the other links -->
+      <!-- Import/Export link -->
       <a id="import-export-toggle" href="#" class="nav-link">Import/Export</a>
       <button id="theme-toggle" title="Dark Mode">
         <span id="theme-icon-container"></span>
@@ -47,13 +47,16 @@
   <!-- container for the interactive graph -->
   <div class="graph-container-wrapper">
     <div id="graph-container"></div>
-    <!-- buttons to control the graph view -->
+    <!-- Floating control panel for the graph -->
     <div class="graph-controls">
       <button id="zoom-in" class="control-button">+</button>
       <button id="zoom-out" class="control-button">–</button>
       <button id="center-graph" class="control-button center">Centre Graph</button>
       <button id="clear-graph" class="control-button clear">Clear Graph</button>
       <button id="color-toggle" class="control-button">Colour Nodes: Off</button>
+      <!-- Curved undo/redo icons for intuitive controls -->
+      <button id="undo-button" class="control-button" title="Undo"><i class="fa-solid fa-undo"></i></button>
+      <button id="redo-button" class="control-button" title="Redo"><i class="fa-solid fa-redo"></i></button>
     </div>
   </div>
   
@@ -79,7 +82,7 @@
         <ul class="modal-list">
           <li><strong>Click to Expand:</strong> Click a node to reveal related articles.</li>
           <li><strong>Ctrl/Command + Click:</strong> Open the article in a new tab.</li>
-          <li><strong>Graph Controls:</strong> Use the zoom, centre and clear buttons to adjust the view.</li>
+          <li><strong>Graph Controls:</strong> Use the zoom, centre, clear, and undo/redo buttons to adjust the view.</li>
         </ul>
       </div>
       <div class="modal-section">

@@ -1,5 +1,6 @@
 import { getLinkCount, getAllLinks, getPageIdByTitle, getPageviews, fetchTrendingArticles, getRelatedArticles } from './api.js'
 import { asyncPool } from './utils.js'
+import { recordCommand } from './undoManager.js'
 
 let network
 let nodes
@@ -7,12 +8,32 @@ let edges
 let colourNodesEnabled = false
 let centralNodeId = null  // holds id of our central node
 
+const expandingNodes = new Set()  // guard to prevent duplicate expansions
+
 const minPop = 3000
 const maxPop = 10000000
 const BOOST_FACTOR = 1.1
 let trendingSet = new Set()
 
-// Set trending data by fetching trending articles and storing their titles in lowercase
+// New: Define ExpandCommand class for undo/redo
+class ExpandCommand {
+  constructor(parentNodeId, addedNodes, addedEdges) {
+    this.parentNodeId = parentNodeId;
+    this.addedNodes = addedNodes;
+    this.addedEdges = addedEdges;
+  }
+  do() {
+    window.nodes.add(this.addedNodes);
+    window.edges.add(this.addedEdges);
+  }
+  undo() {
+    const nodeIds = this.addedNodes.map(node => node.id);
+    const edgeIds = this.addedEdges.map(edge => edge.id);
+    window.nodes.remove(nodeIds);
+    window.edges.remove(edgeIds);
+  }
+}
+
 async function setTrendingData() {
   try {
     const trending = await fetchTrendingArticles()
@@ -26,19 +47,16 @@ async function setTrendingData() {
   }
 }
 
-// Logarithmic normalization for scaling popularity
 function logNormalize(rawPopularity) {
   const value = Math.max(rawPopularity, minPop)
   const normalized = (Math.log(value + 1) - Math.log(minPop + 1)) / (Math.log(maxPop + 1) - Math.log(minPop + 1))
   return Math.min(normalized, 1)
 }
 
-// If the article is trending, apply a boost factor
 function getEffectivePopularity(title, rawPopularity) {
   return trendingSet.has(title.toLowerCase()) ? rawPopularity * BOOST_FACTOR : rawPopularity
 }
 
-// Compute node color based on effective popularity using a hue gradient
 export function getNodeColor(title, rawPopularity) {
   const effectivePopularity = getEffectivePopularity(title, rawPopularity)
   const normalized = logNormalize(effectivePopularity)
@@ -46,15 +64,12 @@ export function getNodeColor(title, rawPopularity) {
   return `hsl(${hue}, 70%, 50%)`
 }
 
-// Update all node sizes based on popularity and update computed color
 export function updateAllNodeSizes() {
   const allNodes = nodes.get()
   if (!allNodes.length) return
-
   const minSize = 12
   const maxSize = 30
   const centralOffset = 0.1
-
   allNodes.forEach(node => {
     const rawPopularity = node.popularity || node.linkCount
     let normalized = logNormalize(getEffectivePopularity(node.label, rawPopularity))
@@ -63,19 +78,16 @@ export function updateAllNodeSizes() {
     }
     const newSize = minSize + normalized * (maxSize - minSize)
     nodes.update({ id: node.id, size: newSize })
-
     const computedColor = getNodeColor(node.label, rawPopularity)
     nodes.update({ id: node.id, computedColor })
   })
 }
 
-// Toggle node color mode
 export function setColourNodesEnabled(enabled) {
   colourNodesEnabled = enabled
   updateGraphTheme()
 }
 
-// Update the graph theme based on dark mode setting and node computed color
 export function updateGraphTheme() {
   const isDark = document.body.classList.contains("dark-mode")
   nodes.forEach(node => {
@@ -105,7 +117,6 @@ export function updateGraphTheme() {
   }
 }
 
-// Center the graph with an animation
 export function centerGraph() {
   if (network) {
     setTimeout(() => {
@@ -114,12 +125,10 @@ export function centerGraph() {
   }
 }
 
-// Initialize the vis network graph with nodes, edges, and event listeners
 export function initGraph(container, isDarkMode) {
   nodes = new vis.DataSet([])
   edges = new vis.DataSet([])
   const data = { nodes, edges }
-
   const options = {
     nodes: {
       color: {
@@ -146,20 +155,15 @@ export function initGraph(container, isDarkMode) {
       hover: true
     }
   }
-
   network = new vis.Network(container, data, options)
   network.once("stabilizationIterationsDone", () => {
     network.fit({ animation: false })
     centerGraph()
   })
-
-  // --- ALT-CLICK TO TOGGLE COLLAPSE/EXPAND ---
   network.on("click", (params) => {
     if (params.nodes.length > 0 && params.event.srcEvent.altKey) {
-      // Clear selection immediately to remove outline.
       network.unselectAll();
       const clickedId = params.nodes[0];
-      // If the clicked node is a cluster node, open it.
       if (String(clickedId).startsWith("cluster-")) {
         network.openCluster(clickedId);
       } else {
@@ -178,8 +182,6 @@ export function initGraph(container, isDarkMode) {
       setTimeout(() => { network.redraw(); }, 1000);
     }
   });
-  // --- END ALT-CLICK LISTENER ---
-
   window.network = network
   window.nodes = nodes
   window.edges = edges
@@ -187,7 +189,6 @@ export function initGraph(container, isDarkMode) {
   return { network, nodes, edges }
 }
 
-// Collapse the children of a node into a cluster
 export function collapseChildren(parentId) {
   if (!network) return;
   const children = nodes.get({ filter: node => node.parent === parentId });
@@ -207,7 +208,6 @@ export function collapseChildren(parentId) {
   network.redraw();
 }
 
-// Expand a collapsed cluster of children for a node
 export function expandChildren(parentId) {
   if (!network) return;
   const clusterId = "cluster-" + parentId;
@@ -220,8 +220,13 @@ export function expandChildren(parentId) {
   }
 }
 
-// Modify createOrExpandNode to add a 'parent' property to child nodes
+// Updated: Ensure an expansion is processed only once per node.
 export async function createOrExpandNode(nodeId, title, pageid) {
+  if (expandingNodes.has(nodeId)) {
+    console.warn("Expansion already in progress for node", nodeId);
+    return;
+  }
+  expandingNodes.add(nodeId);
   try {
     console.debug("expanding node for article", title);
     const relatedArticles = await getRelatedArticles(title, 20);
@@ -230,7 +235,6 @@ export async function createOrExpandNode(nodeId, title, pageid) {
       console.warn("no related articles found for", title);
       return;
     }
-    
     NProgress.start();
     const totalItems = relatedArticles.length;
     let progressCount = 0;
@@ -245,6 +249,10 @@ export async function createOrExpandNode(nodeId, title, pageid) {
     const prunedCandidates = await pruneCandidates(candidates);
     console.debug("pruned candidate articles", prunedCandidates);
     
+    // Prepare arrays to record added nodes and edges.
+    const addedNodes = [];
+    const addedEdges = [];
+    
     for (const candidate of prunedCandidates) {
       if (candidate.title.toLowerCase() === title.toLowerCase()) continue;
       const existingNode = nodes.get({ filter: node => node.label.toLowerCase() === candidate.title.toLowerCase() })[0];
@@ -253,39 +261,50 @@ export async function createOrExpandNode(nodeId, title, pageid) {
           nodes.update({ id: existingNode.id, popularity: candidate.popularity });
         }
         if (edges.get({ filter: e => e.from === nodeId && e.to === existingNode.id }).length === 0) {
-          edges.add({ from: nodeId, to: existingNode.id });
+          const newEdge = { from: nodeId, to: existingNode.id };
+          edges.add(newEdge);
+          addedEdges.push(newEdge);
         }
       } else {
         const nodeSize = Math.max(5, 20);
         const newColor = colourNodesEnabled ? getNodeColor(candidate.title, candidate.popularity) : (document.body.classList.contains("dark-mode") ? "#222" : "#fff");
         const newNodeId = nodes.length + 1;
-        nodes.add({
+        const newNode = {
           id: newNodeId,
           label: candidate.title,
           size: nodeSize,
           popularity: candidate.popularity,
           linkCount: candidate.linkCount,
-          parent: nodeId,  // new property for collapse/expand
+          parent: nodeId,
           color: document.body.classList.contains("dark-mode")
             ? { background: newColor, border: "#fff", highlight: { background: newColor, border: "#fff" }, hover: { background: newColor, border: "#fff" } }
             : { background: newColor, border: "#2C3E50", highlight: { background: newColor, border: "#2C3E50" }, hover: { background: newColor, border: "#2C3E50" } },
           font: { color: document.body.classList.contains("dark-mode") ? "#fff" : "#333" }
-        });
-        // Check if the edge already exists before adding.
-        if (edges.get({ filter: e => e.from === nodeId && e.to === newNodeId }).length === 0) {
-          edges.add({ from: nodeId, to: newNodeId });
-        }
+        };
+        nodes.add(newNode);
+        addedNodes.push(newNode);
+        const newEdge = { from: nodeId, to: newNodeId };
+        edges.add(newEdge);
+        addedEdges.push(newEdge);
       }
     }
     
     updateAllNodeSizes();
     NProgress.done();
+    
+    // Only record an undo command if expanding a node that is NOT the center node.
+    if (nodeId !== centralNodeId && (addedNodes.length || addedEdges.length)) {
+      const command = new ExpandCommand(nodeId, addedNodes, addedEdges);
+      recordCommand(command);
+    }
+    
   } catch (error) {
     console.error("error during node expansion", error);
+  } finally {
+    expandingNodes.delete(nodeId);
   }
 }
 
-// Create the central node if it doesn't exist, else zoom in on it
 export async function createCentralNode(title, pageid) {
   const existing = nodes.get({ filter: node => node.label.toLowerCase() === title.toLowerCase() })[0];
   if (existing) {
@@ -320,6 +339,7 @@ export async function createCentralNode(title, pageid) {
     font: { color: isDark ? "#fff" : "#333" }
   });
   
+  // When creating the central node, we intentionally do not record an undo command.
   await createOrExpandNode(newId, title, pageid);
   updateAllNodeSizes();
   setTimeout(() => {
@@ -327,7 +347,6 @@ export async function createCentralNode(title, pageid) {
   }, 1000);
 }
 
-// Helper function to prune candidate articles (unchanged from your original implementation)
 async function pruneCandidates(candidates) {
   const enriched = await asyncPool(8, candidates, async candidate => {
     candidate.normalizedTitle = candidate.title.toLowerCase();
@@ -338,9 +357,7 @@ async function pruneCandidates(candidates) {
     candidate.allLinkTitles = links.map(l => l.title.toLowerCase());
     return candidate;
   });
-
   const candidateSet = enriched;
-
   for (const candidate of candidateSet) {
     const neighbors = candidateSet.filter(c =>
       c.normalizedTitle !== candidate.normalizedTitle &&
@@ -360,20 +377,17 @@ async function pruneCandidates(candidates) {
     }
     candidate.LCC = candidate.candidateDegree < 2 ? 0 : neighborEdges / (candidate.candidateDegree * (candidate.candidateDegree - 1) / 2);
   }
-
   const degrees = candidateSet.map(c => c.candidateDegree);
   const lccs = candidateSet.map(c => c.LCC);
   const minDegree = Math.min(...degrees);
   const maxDegree = Math.max(...degrees);
   const minLCC = Math.min(...lccs);
   const maxLCC = Math.max(...lccs);
-
   candidateSet.forEach(candidate => {
     candidate.normDegree = maxDegree > minDegree ? (candidate.candidateDegree - minDegree) / (maxDegree - minDegree) : 0;
     candidate.normLCC = maxLCC > minLCC ? (candidate.LCC - minLCC) / (maxLCC - minLCC) : 0;
     candidate.score = candidate.normDegree - candidate.normLCC;
   });
-
   candidateSet.sort((a, b) => b.score - a.score);
   return candidateSet.slice(0, 10);
 }

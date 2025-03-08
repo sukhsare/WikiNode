@@ -33,8 +33,7 @@
     zoom: 1;
   }
   
-  /* basic body styling
-     reset margin and set our font and colors */
+  /* basic body styling */
   body {
     margin: 0;
     font-family: 'open sans', arial, sans-serif;
@@ -42,8 +41,7 @@
     color: var(--text-color);
   }
   
-  /* header and nav bar
-     fixed top bar with shadow */
+  /* header and nav bar */
   .top-bar {
     position: fixed;
     top: 0;
@@ -57,8 +55,7 @@
     align-items: center;
   }
   
-  /* header left section
-     holds logo and search container */
+  /* header left section */
   .header-left {
     display: flex;
     align-items: center;
@@ -74,8 +71,7 @@
     height: 40px;
   }
   
-  /* nav links styling
-     positioning links in the top bar */
+  /* nav links styling */
   .nav-links {
     position: absolute;
     right: 60px;
@@ -97,8 +93,7 @@
     text-decoration: underline;
   }
   
-  /* dark mode toggle button
-     simple button with no background */
+  /* dark mode toggle button */
   #theme-toggle {
     background: transparent;
     border: none;
@@ -128,8 +123,7 @@
     margin-top: 2px;
   }
   
-  /* search container styling
-     holds search input and random article button */
+  /* search container styling */
   .search-container {
     position: relative;
     display: flex;
@@ -195,8 +189,7 @@
     background-color: rgba(255, 255, 255, 0.1);
   }
   
-  /* graph container styling
-     center graph on the page */
+  /* graph container styling */
   .graph-container-wrapper {
     position: relative;
     display: flex;
@@ -217,32 +210,43 @@
     outline: none !important;
   }
   
-  /* Remove focus outline from the graph container on focus and focus-visible */
+  /* Remove focus outline from the graph container */
   #graph-container:focus,
   #graph-container:focus-visible {
     outline: none !important;
     box-shadow: none !important;
   }
   
-  /* graph control buttons container */
+  /* Floating graph control panel positioned as before (to the left) */
   .graph-controls {
     position: absolute;
-    bottom: 45px;
+    bottom: 20px;
     left: 185px;
     display: flex;
     gap: 10px;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
     z-index: 1500;
   }
   
-  /* styling for individual control buttons */
+  /* Dark mode overrides for the control panel */
+  body.dark-mode .graph-controls {
+    background: rgba(30, 30, 30, 0.9);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  }
+  
+  /* individual control buttons */
   .control-button {
-    width: 40px;
+    width: auto;
     height: 40px;
+    padding: 0 12px;
+    font-size: 16px;
     border: 1px solid var(--accent-color);
     border-radius: 5px;
     background-color: var(--button-bg);
     color: var(--button-text);
-    font-size: 20px;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     transition: transform 0.2s ease, background-color 0.2s ease;
@@ -269,7 +273,7 @@
   }
   
   #color-toggle {
-    width: 100px;
+    width: 120px;
     height: 40px;
     border: 1px solid var(--accent-color);
     border-radius: 5px;
@@ -316,8 +320,7 @@
     white-space: nowrap;
   }
   
-  /* modal styling for popups
-     basic styles for our modals */
+  /* modal styling for popups */
   .modal {
     display: none;
     position: fixed;
@@ -355,6 +358,7 @@
     border-bottom: none;
     margin-bottom: 10px;
   }
+  
   .modal-header .modal-close {
     position: absolute;
     top: 5px;

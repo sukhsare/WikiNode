@@ -5,13 +5,14 @@ import { fetchRandomArticle } from './modules/api.js'
 import { SEARCH_API_URL } from './config.js'
 import { initTooltip } from './modules/tooltip.js'
 import { initImportExport } from './modules/importExport.js'
+import { undoAction, redoAction } from './modules/undoManager.js'
 
 // When DOM content is loaded, run our setup code.
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize theme toggle so user can switch dark mode.
   initThemeToggle()
 
-  // Add custom NProgress styles for our loading bar: set it to black.
+  // Add custom NProgress styles for our loading bar.
   const nprogressStyle = document.createElement('style')
   nprogressStyle.innerHTML = `
     #nprogress .bar {
@@ -44,6 +45,25 @@ document.addEventListener('DOMContentLoaded', () => {
   initSearch()
   initImportExport()
 
+  // Restore Intro Modal on page load.
+  const introModal = document.getElementById('intro-modal')
+  if (introModal) {
+    introModal.style.display = 'block'
+  }
+  const closeModalBtn = document.getElementById('close-modal')
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', () => {
+      introModal.style.display = 'none'
+    })
+  }
+  if (introModal) {
+    introModal.addEventListener('click', event => {
+      if (event.target === introModal) {
+        introModal.style.display = 'none'
+      }
+    })
+  }
+
   // Add event listener to zoom in button.
   document.getElementById('zoom-in').addEventListener('click', () => {
     const currentScale = network.getScale()
@@ -74,27 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const currentState = colorToggle.textContent.includes('On')
       setColourNodesEnabled(!currentState)
       colorToggle.textContent = `Colour Nodes: ${!currentState ? "On" : "Off"}`
-    })
-  }
-
-  // Show the intro modal on page load.
-  const introModal = document.getElementById('intro-modal')
-  if (introModal) {
-    introModal.style.display = 'block'
-  }
-  // Add event listener to close the modal.
-  const closeModalBtn = document.getElementById('close-modal')
-  if (closeModalBtn) {
-    closeModalBtn.addEventListener('click', () => {
-      introModal.style.display = 'none'
-    })
-  }
-  // Hide the modal if user clicks outside the modal content.
-  if (introModal) {
-    introModal.addEventListener('click', event => {
-      if (event.target === introModal) {
-        introModal.style.display = 'none'
-      }
     })
   }
 
@@ -145,16 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
   // --- KEYBOARD CONTROLS FOR SMOOTH NAVIGATION ---
-  // Set up an object to track currently pressed keys.
   const keysPressed = {};
   document.addEventListener('keydown', (event) => {
-    // Ignore events if an input or textarea is focused.
     if (document.activeElement && 
         (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
       return;
     }
     keysPressed[event.key.toLowerCase()] = true;
-    // Prevent default actions for our control keys.
     if (["arrowleft", "arrowright", "arrowup", "arrowdown", "w", "a", "s", "d", "+", "=", "-"].includes(event.key.toLowerCase())) {
       event.preventDefault();
     }
@@ -162,42 +158,27 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('keyup', (event) => {
     keysPressed[event.key.toLowerCase()] = false;
   });
-
-  // Animation loop for smooth panning and zooming.
   let lastTimestamp = null;
-  const panSpeed = 150; // pixels per second
-  const zoomFactor = 1.01; // multiplicative factor per frame when zoom key is held
+  const panSpeed = 150;
+  const zoomFactor = 1.01;
   function animate(timestamp) {
     if (!lastTimestamp) lastTimestamp = timestamp;
     const delta = timestamp - lastTimestamp;
     lastTimestamp = timestamp;
-    
-    // Calculate movement vector for panning.
     let dx = 0, dy = 0;
-    if (keysPressed["arrowleft"] || keysPressed["a"]) {
-      dx -= 1;
-    }
-    if (keysPressed["arrowright"] || keysPressed["d"]) {
-      dx += 1;
-    }
-    if (keysPressed["arrowup"] || keysPressed["w"]) {
-      dy -= 1;
-    }
-    if (keysPressed["arrowdown"] || keysPressed["s"]) {
-      dy += 1;
-    }
+    if (keysPressed["arrowleft"] || keysPressed["a"]) { dx -= 1; }
+    if (keysPressed["arrowright"] || keysPressed["d"]) { dx += 1; }
+    if (keysPressed["arrowup"] || keysPressed["w"]) { dy -= 1; }
+    if (keysPressed["arrowdown"] || keysPressed["s"]) { dy += 1; }
     if (dx !== 0 || dy !== 0) {
-      // Normalize diagonal movement.
       const len = Math.sqrt(dx * dx + dy * dy);
       dx /= len;
       dy /= len;
-      const distance = (panSpeed * delta) / 1000; // pixels to move this frame
+      const distance = (panSpeed * delta) / 1000;
       const currentPos = network.getViewPosition();
       const newPos = { x: currentPos.x + dx * distance, y: currentPos.y + dy * distance };
       network.moveTo({ position: newPos, animation: { duration: 0 } });
     }
-    
-    // Smooth zooming using +/= and - keys.
     if (keysPressed["+"] || keysPressed["="]) {
       const scale = network.getScale();
       network.moveTo({ scale: scale * zoomFactor, animation: { duration: 0 } });
@@ -206,10 +187,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const scale = network.getScale();
       network.moveTo({ scale: scale / zoomFactor, animation: { duration: 0 } });
     }
-    
     requestAnimationFrame(animate);
   }
   requestAnimationFrame(animate);
   // --- END KEYBOARD CONTROLS ---
 
-})
+  // Add event listeners for Undo and Redo buttons.
+  document.getElementById('undo-button').addEventListener('click', () => {
+    undoAction();
+  });
+  document.getElementById('redo-button').addEventListener('click', () => {
+    redoAction();
+  });
+});
