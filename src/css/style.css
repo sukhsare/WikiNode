@@ -210,18 +210,11 @@
     outline: none !important;
   }
   
-  /* Remove focus outline from the graph container */
-  #graph-container:focus,
-  #graph-container:focus-visible {
-    outline: none !important;
-    box-shadow: none !important;
-  }
-  
-  /* Floating graph control panel positioned as before (to the left) */
+  /* Floating graph control panel */
   .graph-controls {
     position: absolute;
     bottom: 20px;
-    left: 185px;
+    left: 190px;  /* Changed from 185px to 190px */
     display: flex;
     gap: 10px;
     padding: 10px;
