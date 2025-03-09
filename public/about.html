@@ -1,38 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- basic setup for the about page
-       using standard meta tags and linking assets -->
+  <!-- basic setup for the about page using standard meta tags and linking assets -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About – WikiGraph</title>
-  <!-- small icon in the tab -->
   <link rel="icon" href="../src/assets/images/wikigraph_logo.png" type="image/png">
-  <!-- using a nice google font -->
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <!-- main stylesheet -->
-  <link rel="stylesheet" href="../src/CSS/style.css">
-  <!-- font awesome for theme icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-  <!-- include vis-network for graph visualisations -->
+  <link rel="stylesheet" href="../src/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" 
+        crossorigin="anonymous" referrerpolicy="no-referrer">
   <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 </head>
 <body>
-  <!-- header section for navigation
-       logo and links to home and about page -->
+  <!-- header section with consistent navigation -->
   <header class="top-bar">
     <div class="header-left">
-      <!-- clicking the logo brings you back to the home page -->
       <a href="index.html" class="logo">
         <img src="../src/assets/images/wikigraph_logo.png" alt="WikiGraph Logo">
       </a>
     </div>
     <nav class="nav-links">
-      <!-- link to my code on github -->
-      <a href="https://github.com/sukhsare" target="_blank">Code</a>
-      <!-- current page link -->
+      <!-- Consistent navigation ordering -->
+      <a href="getting-started.html">Getting Started</a>
       <a href="about.html">About</a>
-      <!-- button to toggle dark mode -->
+      <a href="https://github.com/sukhsare" target="_blank">Code</a>
+      <a id="import-export-toggle" href="#" class="nav-link">Import/Export</a>
       <button id="theme-toggle" title="Dark Mode">
         <span id="theme-icon-container"></span>
       </button>
@@ -63,7 +56,6 @@
     </p>
   </main>
   
-  <!-- load the main app script as an es module -->
   <script type="module" src="../src/js/app.js"></script>
 </body>
 </html>
