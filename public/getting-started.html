@@ -68,6 +68,7 @@
     <ul>
       <li><strong>Expanding Nodes:</strong> Click any node to load its related articles into the graph.</li>
       <li><strong>Viewing Summaries:</strong> Hover over a node to see a brief summary of the article. (Placeholder: [Insert Tooltip Example Image])</li>
+      <li><strong>Node Sizes & Colours:</strong> Nodes vary in size and colour based on their popularity metrics—such as pageviews and link counts. The central node is typically larger, while related nodes are scaled proportionally. Additionally, when node colouring is enabled, the colours help highlight which articles are more popular or trending.</li>
     </ul>
 
     <h2 id="graph-controls">Graph Controls & Navigation</h2>
@@ -76,7 +77,7 @@
       <li><strong>Zoom In/Out:</strong> Use the <i class="fa-solid fa-plus"></i> and <i class="fa-solid fa-minus"></i> buttons to adjust your view.</li>
       <li><strong>Centre Graph:</strong> Click the <strong>Centre Graph</strong> button to automatically fit all nodes on screen.</li>
       <li><strong>Clear Graph:</strong> The <strong>Clear Graph</strong> button removes all nodes and edges so you can start fresh.</li>
-      <li><strong>Toggle Node Colours:</strong> Click the <strong>Colour Nodes</strong> button to switch between default and popularity-based colour schemes.</li>
+      <li><strong>Toggle Node Colours:</strong> Click the <strong>Colour Nodes</strong> button to switch between the default and popularity-based colour schemes.</li>
     </ul>
 
     <h3>Undo/Redo Functionality</h3>
@@ -88,7 +89,7 @@
 
     <h2 id="advanced-features">Advanced Features</h2>
     <ul>
-      <li><strong>Import/Export:</strong> Use the Import/Export option in the navigation bar to save your graph as JSON, CSV, or PNG for later use or sharing.</li>
+      <li><strong>Import/Export:</strong> Use the Import/Export option in the navigation bar to save your graph as JSON or PNG for later use or sharing.</li>
       <li><strong>Dynamic Tooltips:</strong> Hover over any node to view a concise summary of the article, helping you decide which topic to explore next.</li>
       <li><strong>Keyboard Navigation:</strong> Use the arrow keys or W/A/S/D for panning, and the plus/minus keys for quick zoom adjustments.</li>
     </ul>
@@ -98,15 +99,17 @@
     <p>Click the <strong>Clear Graph</strong> button to remove all nodes and start over.</p>
     <h3>What happens when I expand a node?</h3>
     <p>Expanding a node fetches related articles and displays them as new nodes. Your actions are tracked so you can use undo/redo if needed.</p>
+    <h3>How are node sizes determined?</h3>
+    <p>Node sizes are scaled based on popularity metrics like pageviews and link counts. More significant or central articles are displayed with larger nodes.</p>
     <h3>How are node colours determined?</h3>
-    <p>When node colouring is enabled, nodes are coloured based on popularity metrics like pageviews and link counts.</p>
+    <p>When node colouring is enabled, nodes are coloured according to their popularity. The colour gradient ranges from cooler tones for less popular nodes to warmer hues for those that are trending.</p>
 
     <p><em>Note: Replace image placeholders with final images/icons as needed.</em></p>
   </main>
 
   <!-- Footer -->
   <footer>
-    <p>&copy; WikiGraph 2025. All rights reserved.</p>
+    <!-- Footer intentionally left blank -->
   </footer>
 </body>
 </html>

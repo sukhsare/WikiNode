@@ -214,7 +214,7 @@
   .graph-controls {
     position: absolute;
     bottom: 20px;
-    left: 190px;  /* Changed from 185px to 190px */
+    left: 180px;
     display: flex;
     gap: 10px;
     padding: 10px;
@@ -553,5 +553,16 @@
   .vis-network .vis-selected {
     border: none !important;
     box-shadow: none !important;
+  }
+  
+  /* Custom link styling for main content to prevent purple visited links */
+  .main-content a:link,
+  .main-content a:visited {
+    color: #2C3E50;
+    text-decoration: none;
+  }
+  
+  .main-content a:hover {
+    text-decoration: underline;
   }
   

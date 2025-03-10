@@ -55,7 +55,6 @@
       <button id="center-graph" class="control-button center">Centre Graph</button>
       <button id="clear-graph" class="control-button clear">Clear Graph</button>
       <button id="color-toggle" class="control-button">Colour Nodes: Off</button>
-      <!-- Curved undo/redo icons for intuitive controls -->
       <button id="undo-button" class="control-button" title="Undo"><i class="fa-solid fa-undo"></i></button>
       <button id="redo-button" class="control-button" title="Redo"><i class="fa-solid fa-redo"></i></button>
     </div>
@@ -70,64 +69,33 @@
     </div>
   </div>
   
-  <!-- intro modal explaining the project -->
+  <!-- Updated Intro Modal -->
   <div id="intro-modal" class="modal">
     <div class="modal-content">
       <h2 class="modal-title">Welcome to WikiGraph</h2>
       <p class="modal-description">
-        WikiGraph turns Wikipedia into an interactive graph that shows hidden connections between articles.
-        Explore topics in a fresh, engaging way and discover relationships you might never have noticed before.
+        Discover Wikipedia in a whole new way by exploring interactive graphs that reveal hidden connections between articles.
       </p>
       <div class="modal-section">
-        <h3 class="modal-section-title">Controls</h3>
+        <h3 class="modal-section-title">Quick Tour</h3>
         <ul class="modal-list">
-          <li><strong>Click to Expand:</strong> Click a node to reveal related articles.</li>
-          <li><strong>Ctrl/Command + Click:</strong> Open the article in a new tab.</li>
-          <li><strong>Graph Controls:</strong> Use the zoom, centre, clear, and undo/redo buttons to adjust the view.</li>
+          <li><strong>Search:</strong> Enter an article title to start.</li>
+          <li><strong>Expand Nodes:</strong> Click any node to see related articles.</li>
+          <li><strong>Graph Controls:</strong> Use zoom, centre, clear, and undo/redo buttons to navigate.</li>
         </ul>
       </div>
-      <div class="modal-section">
-        <h3 class="modal-section-title">About This Project</h3>
-        <ul class="modal-list">
-          <li>This final-year project was built to explore data visualisation and graph theory using Wikipedia's huge dataset.</li>
-          <li>The aim is to create an intuitive tool for understanding how articles relate to each other.</li>
-          <li>Future plans include more interactive features and better analytical tools.</li>
-        </ul>
+      <p>For detailed instructions and tips, visit our <a href="getting-started.html">Getting Started</a> page.</p>
+      <div class="modal-footer">
+        <label><input type="checkbox" id="dont-show-intro"> Don't show this again</label>
+        <button id="close-modal" class="modal-close">Start Exploring</button>
       </div>
-      <button id="close-modal" class="modal-close">Okay</button>
     </div>
   </div>
   
   <!-- New Import/Export Modal -->
   <div id="import-export-modal" class="modal">
     <div class="modal-content">
-      <div class="modal-header">
-        <h2>Import/Export Graph</h2>
-        <span id="close-import-export-modal" class="modal-close">&times;</span>
-      </div>
-      <div class="modal-tabs">
-        <button id="export-tab" class="tab active">Export</button>
-        <button id="import-tab" class="tab">Import</button>
-      </div>
-      <div id="export-section" class="modal-section">
-        <p class="modal-info">
-          Export your current graph in one of these formats:
-        </p>
-        <div class="export-controls">
-          <button id="export-json" class="modal-button">Export as JSON</button>
-          <button id="export-csv" class="modal-button">Export as CSV</button>
-          <button id="export-png" class="modal-button">Export as PNG</button>
-        </div>
-      </div>
-      <div id="import-section" class="modal-section" style="display: none;">
-        <p class="modal-info">
-          Import a graph (supported formats: .json, .csv)
-        </p>
-        <div class="import-controls">
-          <input type="file" id="import-file" accept=".json, .csv" />
-          <button id="import-graph" class="modal-button">Import Graph</button>
-        </div>
-      </div>
+      <!-- Import/Export content goes here -->
     </div>
   </div>
   
@@ -135,5 +103,24 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
   <!-- main app script (as an ES module) -->
   <script type="module" src="../src/js/app.js"></script>
+  <script>
+    // Example: Check localStorage flag to conditionally show intro modal
+    document.addEventListener('DOMContentLoaded', () => {
+      const introModal = document.getElementById('intro-modal');
+      const dontShowCheckbox = document.getElementById('dont-show-intro');
+      const closeModalBtn = document.getElementById('close-modal');
+      if (localStorage.getItem('hideIntro') === 'true') {
+        introModal.style.display = 'none';
+      } else {
+        introModal.style.display = 'block';
+      }
+      closeModalBtn.addEventListener('click', () => {
+        if (dontShowCheckbox.checked) {
+          localStorage.setItem('hideIntro', 'true');
+        }
+        introModal.style.display = 'none';
+      });
+    });
+  </script>
 </body>
 </html>
