@@ -93,7 +93,7 @@ function exportGraphAsJSON() {
   const data = { nodes: nodesData, edges: edgesData };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  triggerDownload(url, 'wikigraph.json');
+  triggerDownload(url, 'wikinode.json');
 }
 
 function exportGraphAsCSV() {
@@ -133,7 +133,7 @@ function exportGraphAsCSV() {
   
   const blob = new Blob([csvContent], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
-  triggerDownload(url, 'wikigraph.csv');
+  triggerDownload(url, 'wikinode.csv');
 }
 
 function exportGraphAsPNG() {
@@ -146,7 +146,7 @@ function exportGraphAsPNG() {
   html2canvas(container).then(canvas => {
     canvas.toBlob(blob => {
       const url = URL.createObjectURL(blob);
-      triggerDownload(url, 'wikigraph.png');
+      triggerDownload(url, 'wikinode.png');
     });
   }).catch(error => {
     console.error('Error exporting graph as PNG:', error);
