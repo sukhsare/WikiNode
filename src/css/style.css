@@ -208,6 +208,27 @@
     border: none;
     position: relative;
     outline: none !important;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Remove focus outline from graph container */
+  #graph-container:focus,
+  #graph-container:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+  
+  /* For Firefox */
+  #graph-container::-moz-focus-inner {
+    border: 0;
+  }
+  
+  /* ALSO remove focus outline from canvas inside the graph container */
+  #graph-container canvas {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
   }
   
   /* Floating graph control panel */
@@ -575,5 +596,16 @@
   
   .plain-link:hover {
     text-decoration: underline;
+  }
+  
+  /* Dark mode override for links in main content */
+  body.dark-mode .main-content a:link,
+  body.dark-mode .main-content a:visited {
+    color: #8ab4f8;
+  } 
+  
+  /* Dark mode override for intro modal links: match main content dark mode link color */
+  body.dark-mode #intro-modal a.plain-link {
+    color: #8ab4f8;
   }
   

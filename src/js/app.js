@@ -14,13 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Add custom NProgress styles for our loading bar.
   const nprogressStyle = document.createElement('style')
+  // Use different color based on dark mode
+  const isDarkMode = document.body.classList.contains('dark-mode')
+  const nprogressColor = isDarkMode ? 'white' : 'black'
   nprogressStyle.innerHTML = `
     #nprogress .bar {
-      background: black !important;
+      background: ${nprogressColor} !important;
       z-index: 500;
     }
     #nprogress .peg {
-      box-shadow: 0 0 10px black, 0 0 5px black !important;
+      box-shadow: 0 0 10px ${nprogressColor}, 0 0 5px ${nprogressColor} !important;
     }
   `
   document.head.appendChild(nprogressStyle)
@@ -39,6 +42,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // Update graph theme when theme toggle is clicked.
   document.getElementById('theme-toggle').addEventListener('click', () => {
     updateGraphTheme()
+    // Update NProgress style as well when theme toggles
+    const updatedDarkMode = document.body.classList.contains('dark-mode')
+    const updatedColor = updatedDarkMode ? 'white' : 'black'
+    nprogressStyle.innerHTML = `
+      #nprogress .bar {
+        background: ${updatedColor} !important;
+        z-index: 500;
+      }
+      #nprogress .peg {
+        box-shadow: 0 0 10px ${updatedColor}, 0 0 5px ${updatedColor} !important;
+      }
+    `
   })
 
   // Initialize search functionality and import/export options.
@@ -113,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
-  // Add node click event to expand node or open in new tab if ctrl/meta is pressed.
+  // Add event listener to expand node on click, or open in new tab if ctrl/meta is pressed.
   network.on('click', async params => {
     if (params.nodes.length > 0) {
       const event = params.event && params.event.srcEvent ? params.event.srcEvent : params.event
@@ -146,7 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- KEYBOARD CONTROLS FOR SMOOTH NAVIGATION ---
   const keysPressed = {};
   document.addEventListener('keydown', (event) => {
-    if (document.activeElement && 
+    if (document.activeElement &&
         (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
       return;
     }
