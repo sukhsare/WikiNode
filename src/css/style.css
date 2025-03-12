@@ -566,3 +566,14 @@
     text-decoration: underline;
   }
   
+  /* Plain link styling for modal links to prevent default hyperlink color changes */
+  .plain-link:link,
+  .plain-link:visited {
+    color: #000;
+    text-decoration: none;
+  }
+  
+  .plain-link:hover {
+    text-decoration: underline;
+  }
+  
