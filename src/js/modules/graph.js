@@ -18,7 +18,7 @@ const maxPop = 10000000
 const BOOST_FACTOR = 1.1
 let trendingSet = new Set()
 
-// a command class for undo/redo of node expansions
+// a command class for undo/redo of node expansions or additions
 class ExpandCommand {
   constructor(parentNodeId, addedNodes, addedEdges) {
     this.parentNodeId = parentNodeId
@@ -28,6 +28,7 @@ class ExpandCommand {
   do() {
     window.nodes.add(this.addedNodes)
     window.edges.add(this.addedEdges)
+    updateAllNodeSizes()  // make sure node sizes are recalculated on redo
   }
   undo() {
     const nodeIds = this.addedNodes.map(n => n.id)
@@ -236,19 +237,21 @@ export function expandChildren(parentId) {
 }
 
 // expand a node (or create new nodes) based on related articles
+//  always record undo command for expansion regardless of central node status.
 export async function createOrExpandNode(nodeId, title, pageid) {
   if (expandingNodes.has(nodeId)) {
     console.warn("expansion already in progress for node", nodeId)
-    return
+    return null
   }
   expandingNodes.add(nodeId)
+  let command = null
   try {
     console.debug("expanding node for article", title)
     const relatedArticles = await getRelatedArticles(title, 20)
     console.debug("related articles returned", relatedArticles)
     if (!relatedArticles.length) {
       console.warn("no related articles found for", title)
-      return
+      return null
     }
     NProgress.start()
     const totalItems = relatedArticles.length
@@ -275,7 +278,8 @@ export async function createOrExpandNode(nodeId, title, pageid) {
         if (candidate.popularity > existingNode.popularity) {
           nodes.update({ id: existingNode.id, popularity: candidate.popularity })
         }
-        if (edges.get({ filter: e => e.from === nodeId && e.to === existingNode.id }).length === 0) {
+        // avoid duplicate edges by checking both directions
+        if (edges.get({ filter: e => (e.from === nodeId && e.to === existingNode.id) || (e.from === existingNode.id && e.to === nodeId) }).length === 0) {
           const newEdge = { from: nodeId, to: existingNode.id }
           edges.add(newEdge)
           addedEdges.push(newEdge)
@@ -309,9 +313,9 @@ export async function createOrExpandNode(nodeId, title, pageid) {
     updateAllNodeSizes()
     NProgress.done()
     
-    // record undo command if this isn't the central node
-    if (nodeId !== centralNodeId && (addedNodes.length || addedEdges.length)) {
-      const command = new ExpandCommand(nodeId, addedNodes, addedEdges)
+    // always record undo command if any nodes/edges were added
+    if (addedNodes.length || addedEdges.length) {
+      command = new ExpandCommand(nodeId, addedNodes, addedEdges)
       recordCommand(command)
     }
     
@@ -320,6 +324,7 @@ export async function createOrExpandNode(nodeId, title, pageid) {
   } finally {
     expandingNodes.delete(nodeId)
   }
+  return command
 }
 
 // create a central node for the searched article and expand it
@@ -357,8 +362,14 @@ export async function createCentralNode(title, pageid) {
     font: { color: isDark ? "#fff" : "#333" }
   })
   
-  // central node creation doesn't get an undo record
+  // record an undo command for central node creation regardless of expansion
+  const centralNode = nodes.get(newId)
+  const centralCommand = new ExpandCommand(newId, [centralNode], [])
+  recordCommand(centralCommand)
+  
+  // call expansion and record its undo command if any nodes/edges were added
   await createOrExpandNode(newId, title, pageid)
+  
   updateAllNodeSizes()
   setTimeout(() => {
     network.fit({ animation: { duration: 2500, easingFunction: 'easeInOutQuad' } })
