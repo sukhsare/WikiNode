@@ -1,31 +1,31 @@
-// src/js/modules/undoManager.js
+// simple undo/redo manager
+const undoStack = []
+const redoStack = []
 
-const undoStack = [];
-const redoStack = [];
-
-export function recordCommand(command) {
-  undoStack.push(command);
-  redoStack.length = 0; // Clear redo stack on new action
+export function recordCommand(cmd) {
+  undoStack.push(cmd)
+  // whenever a new action happens, clear the redo stack
+  redoStack.length = 0
 }
 
 export function undoAction() {
-  if (undoStack.length === 0) return;
-  const command = undoStack.pop();
-  command.undo();
-  redoStack.push(command);
+  if (!undoStack.length) return
+  const cmd = undoStack.pop()
+  cmd.undo()
+  redoStack.push(cmd)
 }
 
 export function redoAction() {
-  if (redoStack.length === 0) return;
-  const command = redoStack.pop();
-  command.do();
-  undoStack.push(command);
+  if (!redoStack.length) return
+  const cmd = redoStack.pop()
+  cmd.do()
+  undoStack.push(cmd)
 }
 
 export function canUndo() {
-  return undoStack.length > 0;
+  return undoStack.length > 0
 }
 
 export function canRedo() {
-  return redoStack.length > 0;
+  return redoStack.length > 0
 }

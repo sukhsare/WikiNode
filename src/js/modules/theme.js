@@ -2,24 +2,24 @@ export const sunIcon = '<i class="fa-solid fa-sun"></i>'
 export const moonIcon = '<i class="fa-solid fa-moon"></i>'
 
 export function initThemeToggle() {
-  const themeToggle = document.getElementById('theme-toggle')
-  const themeIconContainer = document.getElementById('theme-icon-container')
-  if (!themeToggle || !themeIconContainer) return
+  const toggleBtn = document.getElementById('theme-toggle')
+  const iconContainer = document.getElementById('theme-icon-container')
+  if (!toggleBtn || !iconContainer) return
 
-  // set initial theme from localstorage
+  // set initial theme based on localStorage
   if (localStorage.getItem('theme') === 'dark') {
     document.body.classList.add('dark-mode')
-    themeIconContainer.innerHTML = moonIcon
-    themeIconContainer.classList.add('moon-icon')
-    themeToggle.title = "Light Mode"
+    iconContainer.innerHTML = moonIcon
+    iconContainer.classList.add('moon-icon')
+    toggleBtn.title = "Light Mode"
   } else {
-    themeIconContainer.innerHTML = sunIcon
-    themeIconContainer.classList.add('sun-icon')
-    themeToggle.title = "Dark Mode"
+    iconContainer.innerHTML = sunIcon
+    iconContainer.classList.add('sun-icon')
+    toggleBtn.title = "Dark Mode"
   }
 
-  // click listener to toggle dark mode and update icon
-  themeToggle.addEventListener('click', () => {
+  // when user clicks the toggle, flip dark mode and update the icon
+  toggleBtn.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode')
     updateThemeIcon()
     if (document.body.classList.contains('dark-mode')) {
@@ -31,20 +31,19 @@ export function initThemeToggle() {
 }
 
 function updateThemeIcon() {
-  // update icon based on current theme
-  const themeToggle = document.getElementById('theme-toggle')
-  const themeIconContainer = document.getElementById('theme-icon-container')
-  if (!themeToggle || !themeIconContainer) return
+  const toggleBtn = document.getElementById('theme-toggle')
+  const iconContainer = document.getElementById('theme-icon-container')
+  if (!toggleBtn || !iconContainer) return
 
   if (document.body.classList.contains('dark-mode')) {
-    themeIconContainer.innerHTML = moonIcon
-    themeIconContainer.classList.remove('sun-icon')
-    themeIconContainer.classList.add('moon-icon')
-    themeToggle.title = "Light Mode"
+    iconContainer.innerHTML = moonIcon
+    iconContainer.classList.remove('sun-icon')
+    iconContainer.classList.add('moon-icon')
+    toggleBtn.title = "Light Mode"
   } else {
-    themeIconContainer.innerHTML = sunIcon
-    themeIconContainer.classList.remove('moon-icon')
-    themeIconContainer.classList.add('sun-icon')
-    themeToggle.title = "Dark Mode"
+    iconContainer.innerHTML = sunIcon
+    iconContainer.classList.remove('moon-icon')
+    iconContainer.classList.add('sun-icon')
+    toggleBtn.title = "Dark Mode"
   }
 }

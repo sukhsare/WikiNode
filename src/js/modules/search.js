@@ -7,44 +7,42 @@ let trendingCache = null
 
 export function initSearch() {
   const searchBar = document.getElementById('search-bar')
-  const suggestionsEl = document.getElementById('suggestions')
+  const suggestionsList = document.getElementById('suggestions')
 
-  // when search bar gets focus or is clicked show suggestions and handle trending
+  // when the search bar gets focus or is clicked, show suggestions and handle trending articles
   searchBar.addEventListener('focus', handleTrending)
   searchBar.addEventListener('click', () => {
-    suggestionsEl.style.display = 'block'
+    suggestionsList.style.display = 'block'
     handleTrending()
   })
 
-  // on input update suggestions
+  // update suggestions as the user types
   searchBar.addEventListener('input', async () => {
-    suggestionsEl.style.display = 'block'
+    suggestionsList.style.display = 'block'
     const query = searchBar.value.trim()
     if (!query) {
       handleTrending()
       return
     }
     try {
-      // fetch search results from the wikipedia api using the query
+      // fetch search results from Wikipedia
       const response = await fetch(`${SEARCH_API_URL}&list=search&srsearch=${encodeURIComponent(query)}`)
       const data = await response.json()
-      suggestionsEl.innerHTML = ''
+      suggestionsList.innerHTML = ''
       if (!data.query?.search?.length) {
         const li = document.createElement('li')
         li.textContent = "no results found"
-        suggestionsEl.appendChild(li)
+        suggestionsList.appendChild(li)
         return
       }
-      // sort results so that those starting with the query come first
+      // sort results so titles that start with the query appear first
       const sortedResults = data.query.search.sort((a, b) => {
         const aTitle = a.title.toLowerCase()
         const bTitle = b.title.toLowerCase()
         const q = query.toLowerCase()
-        const aStarts = aTitle.startsWith(q) ? 0 : 1
-        const bStarts = bTitle.startsWith(q) ? 0 : 1
-        return aStarts - bStarts
+        return (aTitle.startsWith(q) ? 0 : 1) - (bTitle.startsWith(q) ? 0 : 1)
       })
-      // loop through sorted results and create suggestion list items
+      // loop through sorted results and create list items
       sortedResults.forEach(item => {
         const lowerTitle = item.title.toLowerCase()
         // filter out unwanted pages
@@ -57,54 +55,55 @@ export function initSearch() {
           lowerTitle.startsWith("category:") ||
           lowerTitle.startsWith("template:") ||
           lowerTitle.includes(".jpg")
-        ) return
+        )
+          return
 
         const li = document.createElement('li')
         li.textContent = item.title
         li.dataset.pageid = item.pageid
-        suggestionsEl.appendChild(li)
+        suggestionsList.appendChild(li)
         li.addEventListener('click', (e) => {
           e.preventDefault()
           e.stopPropagation()
           searchBar.blur()
           createCentralNode(item.title, item.pageid)
           searchBar.value = ''
-          suggestionsEl.innerHTML = ''
-          suggestionsEl.style.display = 'none'
+          suggestionsList.innerHTML = ''
+          suggestionsList.style.display = 'none'
         })
       })
-    } catch (error) {
-      console.error('error fetching search suggestions', error)
+    } catch (err) {
+      console.error('error fetching search suggestions', err)
     }
   })
 
-  // hide suggestions if user clicks outside search bar and suggestions list
+  // hide suggestions if click happens outside the search bar or suggestions
   document.addEventListener('click', (e) => {
-    if (!searchBar.contains(e.target) && !suggestionsEl.contains(e.target)) {
-      suggestionsEl.innerHTML = ''
-      suggestionsEl.style.display = 'none'
+    if (!searchBar.contains(e.target) && !suggestionsList.contains(e.target)) {
+      suggestionsList.innerHTML = ''
+      suggestionsList.style.display = 'none'
     }
   })
 }
 
-// handle trending articles when search bar is empty
+// when search bar is empty, fetch trending articles to show as suggestions
 async function handleTrending() {
   const searchBar = document.getElementById('search-bar')
-  const suggestionsEl = document.getElementById('suggestions')
+  const suggestionsList = document.getElementById('suggestions')
   if (searchBar.value.trim() !== "") return
   if (trendingCache) {
-    populateSuggestions(trendingCache)
+    populateTrending(trendingCache)
   } else {
     trendingCache = await fetchTrendingArticles()
-    populateSuggestions(trendingCache)
+    populateTrending(trendingCache)
   }
 }
 
 // populate suggestions with trending articles
-function populateSuggestions(articles) {
-  const suggestionsEl = document.getElementById('suggestions')
-  suggestionsEl.innerHTML = ''
-  suggestionsEl.style.display = 'block'
+function populateTrending(articles) {
+  const suggestionsList = document.getElementById('suggestions')
+  suggestionsList.innerHTML = ''
+  suggestionsList.style.display = 'block'
   const filtered = articles.filter(article => {
     const title = article.article.trim().toLowerCase()
     return title !== "main_page" &&
@@ -121,20 +120,20 @@ function populateSuggestions(articles) {
   if (filtered.length === 0) {
     const li = document.createElement('li')
     li.textContent = "no trending articles found"
-    suggestionsEl.appendChild(li)
+    suggestionsList.appendChild(li)
     return
   }
   filtered.slice(0, 10).forEach(article => {
     const li = document.createElement('li')
     li.textContent = article.article.replace(/_/g, ' ')
     li.dataset.article = article.article
-    suggestionsEl.appendChild(li)
+    suggestionsList.appendChild(li)
     li.addEventListener('click', async (e) => {
       e.preventDefault()
       e.stopPropagation()
       document.getElementById('search-bar').blur()
-      suggestionsEl.innerHTML = ''
-      suggestionsEl.style.display = 'none'
+      suggestionsList.innerHTML = ''
+      suggestionsList.style.display = 'none'
       const displayTitle = li.dataset.article.replace(/_/g, ' ')
       let pageid = await getPageIdByTitle(displayTitle)
       if (!pageid) pageid = displayTitle

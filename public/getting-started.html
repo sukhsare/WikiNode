@@ -14,7 +14,7 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-  <!-- Header with Navigation -->
+  <!-- Top header with nav -->
   <header class="top-bar">
     <div class="header-left">
       <a href="index.html" class="logo">
@@ -27,18 +27,18 @@
       </div>
     </div>
     <nav class="nav-links">
-      <!-- Consistent navigation ordering -->
+      <!-- simple nav links -->
       <a href="getting-started.html">Getting Started</a>
       <a href="about.html">About</a>
       <a href="https://github.com/sukhsare" target="_blank">Code</a>
-      <!-- Removed Import/Export link on Getting Started page -->
+      <!-- no Import/Export link on this page -->
       <button id="theme-toggle" title="Dark Mode">
         <span id="theme-icon-container"></span>
       </button>
     </nav>
   </header>
 
-  <!-- Main Content -->
+  <!-- Main Content (DO NOT CHANGE THE TEXT BELOW) -->
   <main class="main-content" style="margin-top: 100px;">
     <h1>Getting Started with WikiNode</h1>
     <p>Welcome to WikiNode! This guide is designed to help you quickly understand and navigate the system so you can explore Wikipedia’s vast content in an engaging, interactive way.</p>
@@ -103,15 +103,14 @@
     <p>Node sizes are scaled based on popularity metrics like pageviews and link counts. More significant or central articles are displayed with larger nodes.</p>
     <h3>How are node colours determined?</h3>
     <p>When node colouring is enabled, nodes are coloured according to their popularity. The colour gradient ranges from cooler tones for less popular nodes to warmer hues for those that are trending.</p>
-
   </main>
 
-  <!-- Footer -->
+  <!-- Footer remains unchanged -->
   <footer>
     <!-- Footer intentionally left blank -->
   </footer>
 
-  <!-- Added minimal script to initialize theme toggle on Getting Started page -->
+  <!-- minimal script to init theme toggle on this page -->
   <script type="module">
     import { initThemeToggle } from "../src/js/modules/theme.js";
     document.addEventListener("DOMContentLoaded", initThemeToggle);

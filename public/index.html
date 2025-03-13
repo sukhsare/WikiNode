@@ -5,23 +5,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WikiNode</title>
-  <!-- favicon placed in public folder -->
+  <!-- favicon from public folder -->
   <link rel="icon" href="wikinode_logo.png" type="image/png">
-  <!-- load NProgress CSS (for the loading bar) -->
+  <!-- NProgress CSS for the loading bar -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.css" />
-  <!-- use a nice Google font -->
+  <!-- Google Font for our text -->
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Font Awesome for theme and undo/redo icons -->
+  <!-- Font Awesome for icons (theme toggle, undo/redo) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- main stylesheet -->
   <link rel="stylesheet" href="../src/css/style.css">
-  <!-- include vis-network for the graph visualisation -->
+  <!-- vis-network for graph visualization -->
   <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
-  <!-- include html2canvas for PNG export -->
+  <!-- html2canvas for PNG export -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
-  <!-- header with logo, search, nav links and Import/Export link -->
+  <!-- Header: logo, search bar, nav links, and Import/Export toggle -->
   <header class="top-bar">
     <div class="header-left">
       <a href="index.html" class="logo">
@@ -34,7 +34,7 @@
       </div>
     </div>
     <nav class="nav-links">
-      <!-- Consistent navigation ordering -->
+      <!-- nav links in a consistent order -->
       <a href="getting-started.html">Getting Started</a>
       <a href="about.html">About</a>
       <a href="https://github.com/sukhsare" target="_blank">Code</a>
@@ -45,23 +45,23 @@
     </nav>
   </header>
   
-  <!-- container for the interactive graph -->
+  <!-- Graph container where the interactive graph is shown -->
   <div class="graph-container-wrapper">
     <div id="graph-container"></div>
-    <!-- Floating control panel for the graph -->
+    <!-- Floating control panel for graph actions -->
     <div class="graph-controls">
       <button id="zoom-in" class="control-button">+</button>
       <button id="zoom-out" class="control-button">–</button>
       <button id="center-graph" class="control-button center">Centre Graph</button>
       <button id="clear-graph" class="control-button clear">Clear Graph</button>
       <button id="color-toggle" class="control-button">Colour Nodes: Off</button>
-      <!-- Curved undo/redo icons for intuitive controls -->
+      <!-- Undo/Redo buttons with icons -->
       <button id="undo-button" class="control-button" title="Undo"><i class="fa-solid fa-undo"></i></button>
       <button id="redo-button" class="control-button" title="Redo"><i class="fa-solid fa-redo"></i></button>
     </div>
   </div>
   
-  <!-- legend showing popularity gradient -->
+  <!-- Legend showing popularity gradient -->
   <div id="legend-container">
     <div id="legend">
       <div class="legend-label">Least Popular</div>
@@ -70,7 +70,7 @@
     </div>
   </div>
   
-  <!-- Updated Intro Modal -->
+  <!-- Intro Modal (pop-up for first time users) -->
   <div id="intro-modal" class="modal">
     <div class="modal-content">
       <h2 class="modal-title">Welcome to WikiNode</h2>
@@ -93,7 +93,7 @@
     </div>
   </div>
   
-  <!-- New Import/Export Modal -->
+  <!-- Import/Export Modal -->
   <div id="import-export-modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -128,7 +128,7 @@
   
   <!-- load NProgress JS for the loading bar -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
-  <!-- main app script (as an ES module) -->
+  <!-- main app script (ES module) -->
   <script type="module" src="../src/js/app.js"></script>
 </body>
 </html>

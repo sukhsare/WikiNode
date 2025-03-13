@@ -1,29 +1,31 @@
 export async function asyncPool(limit, array, iteratorFn, onProgress) {
-  const ret = [] // array to hold all task promises
-  const executing = [] // tasks that are currently running
+  // this will hold all our promise results
+  const results = []
+  // these are the tasks that are running right now
+  const running = []
 
-  // loop through each item in the array
+  // loop through every item in the array
   for (const item of array) {
-    // run iterator function for this item and call onProgress if provided
+    // run the function for this item; call onProgress if it's given
     const p = Promise.resolve()
       .then(() => iteratorFn(item))
       .then(result => {
         if (onProgress) onProgress()
         return result
       })
-    ret.push(p)
+    results.push(p)
 
-    // if we have a limit manage running tasks
+    // if the limit is reached, manage the concurrent tasks
     if (limit <= array.length) {
-      // when promise p finishes remove it from executing
-      const e = p.then(() => executing.splice(executing.indexOf(e), 1))
-      executing.push(e)
-      // if executing tasks reached the limit wait for one to finish
-      if (executing.length >= limit) {
-        await Promise.race(executing)
+      // when p is done, remove it from the running list
+      const e = p.then(() => running.splice(running.indexOf(e), 1))
+      running.push(e)
+      // if we have too many running, wait for one to finish
+      if (running.length >= limit) {
+        await Promise.race(running)
       }
     }
   }
-  // wait for all tasks to finish and return the results
-  return Promise.all(ret)
+  // wait for everything to finish and then return all results
+  return Promise.all(results)
 }

@@ -1,17 +1,17 @@
 import { SEARCH_API_URL, LINKS_API_URL, PAGEVIEWS_API_URL } from '../config.js'
 
-// caches for pageviews link count page ids and all links
+// caches for pageviews, link counts, page ids and all links
 const pageviewsCache = new Map()
 const linkCountCache = new Map()
-const pageIdCache = {}  // key is lowercase title
+const pageIdCache = {}  // key is lowercased title
 const allLinksCache = new Map()
 
-// helper to sleep for ms milliseconds
+// helper function to sleep for ms milliseconds
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-// get pageviews for a given title
+// get total pageviews for a given title
 export async function getPageviews(title) {
   if (pageviewsCache.has(title)) return pageviewsCache.get(title)
   const formattedTitle = title.replace(/ /g, "_")
@@ -112,7 +112,7 @@ export async function getPageIdsForTitles(titles) {
   return {}
 }
 
-// get page id by title
+// get page id for a single title
 export async function getPageIdByTitle(title) {
   const key = title.toLowerCase()
   if (pageIdCache[key]) return pageIdCache[key]
@@ -120,7 +120,7 @@ export async function getPageIdByTitle(title) {
   return result[key] || null
 }
 
-// get all links for a page id
+// get all links for a given page id
 export async function getAllLinks(pageid) {
   if (allLinksCache.has(pageid)) return allLinksCache.get(pageid)
   let allLinks = []
@@ -141,7 +141,7 @@ export async function getAllLinks(pageid) {
   return allLinks
 }
 
-// fetch trending articles from wikipedia pageviews api
+// fetch trending articles from Wikipedia pageviews API
 export async function fetchTrendingArticles() {
   const yesterday = new Date()
   yesterday.setDate(yesterday.getDate() - 1)
@@ -164,7 +164,7 @@ export async function fetchTrendingArticles() {
   }
 }
 
-// fetch a random article ensuring main namespace using rnnamespace=0
+// fetch a random article (main namespace only, rnnamespace=0)
 export async function fetchRandomArticle() {
   try {
     const randomEndpoint = "https://en.wikipedia.org/w/api.php?action=query&list=random&rnnamespace=0&rnlimit=1&format=json&origin=*"
@@ -180,9 +180,9 @@ export async function fetchRandomArticle() {
   }
 }
 
-// fetch related articles using the search api
+// fetch related articles using the search API
 export async function getRelatedArticles(title) {
-  // construct url to fetch related pages using srsearch
+  // build the url to get related pages using srsearch
   const url = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(title)}&srlimit=10&format=json&origin=*`
   try {
     const response = await fetch(url, { mode: "cors" })
@@ -191,7 +191,7 @@ export async function getRelatedArticles(title) {
     }
     const data = await response.json()
     console.debug("search response for", title, data)
-    // map search results to array of objects with title and snippet
+    // map the results to an array of objects with title and snippet
     const relatedArticles = data.query.search.map(result => ({
       title: result.title,
       snippet: result.snippet || ""
