@@ -14,7 +14,7 @@
   <!-- Font Awesome for icons (theme toggle, undo/redo) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- main stylesheet -->
-  <link rel="stylesheet" href="../src/css/style.css">
+  <link rel="stylesheet" href="src/css/style.css">
   <!-- vis-network for graph visualization -->
   <script src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
   <!-- html2canvas for PNG export -->
@@ -25,7 +25,7 @@
   <header class="top-bar">
     <div class="header-left">
       <a href="index.html" class="logo">
-        <img src="../src/assets/images/wikinode_logo.png" alt="WikiNode Logo">
+        <img src="src/assets/images/wikinode_logo.png" alt="WikiNode Logo">
       </a>
       <div class="search-container">
         <input id="search-bar" type="text" placeholder="Search Wikipedia..." autocomplete="off">
@@ -34,7 +34,7 @@
       </div>
     </div>
     <nav class="nav-links">
-      <!-- nav links in a consistent order -->
+      <!-- nav links -->
       <a href="getting-started.html">Getting Started</a>
       <a href="about.html">About</a>
       <a href="https://github.com/sukhsare" target="_blank">Code</a>
@@ -45,23 +45,23 @@
     </nav>
   </header>
   
-  <!-- Graph container where the interactive graph is shown -->
+  <!-- graph container where graph is shown -->
   <div class="graph-container-wrapper">
     <div id="graph-container"></div>
-    <!-- Floating control panel for graph actions -->
+    <!-- control panel for graph actions -->
     <div class="graph-controls">
       <button id="zoom-in" class="control-button">+</button>
       <button id="zoom-out" class="control-button">–</button>
       <button id="center-graph" class="control-button center">Centre Graph</button>
       <button id="clear-graph" class="control-button clear">Clear Graph</button>
       <button id="color-toggle" class="control-button">Colour Nodes: Off</button>
-      <!-- Undo/Redo buttons with icons -->
+      <!-- undo/redo buttons with icons -->
       <button id="undo-button" class="control-button" title="Undo"><i class="fa-solid fa-undo"></i></button>
       <button id="redo-button" class="control-button" title="Redo"><i class="fa-solid fa-redo"></i></button>
     </div>
   </div>
   
-  <!-- Legend showing popularity gradient -->
+  <!-- legend showing gradient -->
   <div id="legend-container">
     <div id="legend">
       <div class="legend-label">Least Popular</div>
@@ -93,7 +93,7 @@
     </div>
   </div>
   
-  <!-- Import/Export Modal -->
+  <!-- import/export Modal -->
   <div id="import-export-modal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
@@ -129,6 +129,6 @@
   <!-- load NProgress JS for the loading bar -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/nprogress/0.2.0/nprogress.min.js"></script>
   <!-- main app script (ES module) -->
-  <script type="module" src="../src/js/app.js"></script>
+  <script type="module" src="src/js/app.js"></script>
 </body>
 </html>
