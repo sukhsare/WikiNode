@@ -1,18 +1,40 @@
 # WikiNode
 
-WikiNode is a final-year project I built to transform the way we explore Wikipedia. Instead of a long list of articles, it turns Wikipedia into an interactive graph that makes discovering connections between topics fun and intuitive.
+WikiNode transforms Wikipedia into an interactive graph, making it easier to explore and visualise connections between topics.
 
-## What It Does
+## Live Demo
 
-- **Explore & Discover:** Type in any Wikipedia article and see its related articles displayed as connected nodes.
-- **Interactive Graph:** Click nodes to expand the network and uncover hidden relationships.
-- **Simple & Responsive:** Enjoy a clean interface with dark/light mode support.
+Access the live version at [wikinode.co.uk](https://wikinode.co.uk).
+
+## Features
+
+- **Interactive Exploration:** Input a Wikipedia article to visualise related topics as interconnected nodes.
+- **Dynamic Expansion:** Click on nodes to delve deeper into associated articles.
+- **Responsive Design:** Clean interface supporting both dark and light modes.
 
 ## Getting Started
 
-1. **Clone the Repo:**  
-   `git clone https://github.com/yourusername/wikinode.git`
-2. **Open It:**  
-   Launch `index.html` in your browser to start exploring.
+To run WikiNode locally:
 
-I built WikiNode to spark curiosity and help people see how interconnected knowledge really is. Enjoy exploring!
+1. **Clone the Repository:**
+
+    ```bash
+    git clone https://github.com/sukhsare/WikiNode.git
+    ```
+
+2. **Navigate to the Project Directory:**
+
+    ```bash
+    cd WikiNode
+    ```
+
+3. **Open the Application:**
+
+    Launch `index.html` in your preferred web browser.
+
+## Technologies Used
+
+- **JavaScript:** Core functionality and interactivity.
+- **HTML & CSS:** Structure and styling.
+- **Wikipedia REST API:** Fetches article data and related topics.
+- **vis.js:** Renders the interactive graph.
