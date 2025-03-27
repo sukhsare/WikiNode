@@ -54,7 +54,8 @@ export function initSearch() {
           lowerTitle.startsWith("wikipedia:") ||
           lowerTitle.startsWith("category:") ||
           lowerTitle.startsWith("template:") ||
-          lowerTitle.includes(".jpg")
+          lowerTitle.includes(".jpg") ||
+          lowerTitle.startsWith(".xxx")
         )
           return
 

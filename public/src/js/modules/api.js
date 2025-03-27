@@ -29,7 +29,7 @@ export async function getPageviews(title) {
   }
 }
 
-// get link count for a given title
+// Get link count for a given title
 export async function getLinkCount(title) {
   if (linkCountCache.has(title)) return linkCountCache.get(title)
   const formattedTitle = title.replace(/ /g, "_")
