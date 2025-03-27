@@ -55,7 +55,7 @@ export function initSearch() {
           lowerTitle.startsWith("category:") ||
           lowerTitle.startsWith("template:") ||
           lowerTitle.includes(".jpg") ||
-          lowerTitle.startsWith(".xxx")
+          lowerTitle.includes(".xxx")
         )
           return
 
