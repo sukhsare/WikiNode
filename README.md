@@ -2,10 +2,6 @@
 
 WikiNode transforms Wikipedia into an interactive graph, making it easier to explore and visualise connections between topics.
 
-## Live Demo
-
-Access the live version at [wikinode.co.uk](https://wikinode.co.uk).
-
 ## Features
 
 - **Interactive Exploration:** Input a Wikipedia article to visualise related topics as interconnected nodes.
@@ -38,3 +34,16 @@ To run WikiNode locally:
 - **HTML & CSS:** Structure and styling.
 - **Wikipedia REST API:** Fetches article data and related topics.
 - **vis.js:** Renders the interactive graph.
+
+## Testing
+
+The project includes unit and integration tests to verify functionality:
+
+- **Unit Tests:** Verify individual components like API functions, graph calculations, and utility functions
+- **Integration Tests:** Ensure components work together correctly
+- **Mock Objects:** Simulate external dependencies for reliable testing
+
+Test files are located in the `tests` directory and follow the structure:
+- `tests/unit/` - Individual component tests
+- `tests/integration/` - Tests for component interactions
+- `tests/mocks/` - Mock implementations of external libraries
