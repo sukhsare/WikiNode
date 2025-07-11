@@ -77,7 +77,8 @@ body {
   transform: translateY(-50%);
   display: flex;
   gap: 10px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
+  max-width: calc(100% - 500px);
 }
 
 .nav-links a {
@@ -241,6 +242,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   z-index: 1500;
+  max-width: calc(100% - 300px);
 }
 
 /* dark mode override for controls panel */
