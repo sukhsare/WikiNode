@@ -55,7 +55,8 @@ export function initSearch() {
           lowerTitle.startsWith("category:") ||
           lowerTitle.startsWith("template:") ||
           lowerTitle.includes(".jpg") ||
-          lowerTitle.includes(".xxx")
+          lowerTitle.includes(".xxx") ||
+          lowerTitle.includes(".svg")
         )
           return
 
@@ -116,7 +117,9 @@ function populateTrending(articles) {
            !title.startsWith("category:") &&
            !title.startsWith("template:") &&
            !title.includes("citation needed") &&
-           !title.includes(".jpg")
+           !title.includes(".jpg") &&
+           !title.includes(".xxx") &&
+          !title.includes(".svg")
   })
   if (filtered.length === 0) {
     const li = document.createElement('li')
