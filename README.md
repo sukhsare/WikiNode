@@ -31,10 +31,6 @@ To run WikiNode locally:
 3. **Open the Application:**
    Launch `index.html` in your preferred web browser.
 
-## Live Demo
-
-Visit [wikinode.co.uk](http://wikinode.co.uk) to try WikiNode online.
-
 ## Technologies Used
 
 - **JavaScript:** Core functionality and interactivity
